@@ -7,22 +7,22 @@ import useHttp from "./hooks/use-http";
 function App() {
   const [tasks, setTasks] = useState([]);
 
-  const transformTasks = useCallback((tasksObk) => {
-    const loadedTasks = [];
-
-    for (const taskKey in tasksObk) {
-      loadedTasks.push({ id: taskKey, text: tasksObk[taskKey].text });
-    }
-
-    setTasks(loadedTasks);
-  }, []);
-
-  const { isLoading, error, sendRequest: fetchTasks } = useHttp(transformTasks);
+  const { isLoading, error, sendRequest: fetchTasks } = useHttp();
 
   useEffect(() => {
+    const transformTasks = (tasksObk) => {
+      const loadedTasks = [];
+
+      for (const taskKey in tasksObk) {
+        loadedTasks.push({ id: taskKey, text: tasksObk[taskKey].text });
+      }
+
+      setTasks(loadedTasks);
+    };
+
     fetchTasks({
       url: "https://todo-27646-default-rtdb.firebaseio.com/tasks.json",
-    });
+    }, transformTasks);
   }, [fetchTasks]);
 
   const taskAddHandler = (task) => {
